@@ -67,13 +67,14 @@ Goal: open today's entry, type markdown, draw ink, insert photo, tag it, persist
 **Verify:** instrumentation test writes `journal.md`, reads it back, path visible via Files app.
 
 ### 1.2 — Database index (`:core:database`)
-- [ ] Entities: `JournalEntry(date PK, uri, updatedAt)`, `Tag(id, name)`, `EntryTagCrossRef`, `Attachment(id, entryDate, kind, uri)`
-- [ ] DAOs + `ThoughtCanvasDatabase` (Room, KSP)
-- [ ] Hilt module `DatabaseModule`
-- [ ] Migration test skeleton
-- [ ] `JournalIndexRepository`: mirror of filesystem into DB
+- [x] Entities: `JournalEntryEntity(date PK, updatedAt, createdAt)`, `TagEntity(id, name unique)`, `EntryTagCrossRef` (cascade FKs), `AttachmentEntity(id, entryDate, kind, relativePath, createdAt)`
+- [x] DAOs (`JournalEntryDao`, `TagDao`, `AttachmentDao`) with `Flow` reads and suspend writes
+- [x] `ThoughtCanvasDatabase` (Room 2.8.4, KSP 2.3.6, schema export at `core/database/schemas/`)
+- [x] Hilt module `DatabaseModule`
+- [x] `MigrationTest` skeleton using `MigrationTestHelper`
+- [x] `JournalIndexRepository` (transactional upsert, tag replace, cascade-delete)
 
-**Verify:** `./gradlew :core:database:test` green. Insert + query round-trip works.
+**Verify:** `./gradlew :core:database:connectedDebugAndroidTest` → 7/7 tests passed on Xiaomi Pad.
 
 ### 1.3 — Feature module `:feature:journal`
 - [ ] Add module to `settings.gradle.kts`

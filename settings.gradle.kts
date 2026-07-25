@@ -28,3 +28,4 @@ rootProject.name = "ThoughtCanvas"
 include(":app")
 include(":core:database")
 include(":core:storage")
+include(":feature:journal")

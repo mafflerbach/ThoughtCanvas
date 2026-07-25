@@ -7,17 +7,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.mafflerbach.thoughtcanvas.core.storage.StorageRoot
+import io.github.mafflerbach.thoughtcanvas.feature.journal.TodayJournalScreen
 import io.github.mafflerbach.thoughtcanvas.onboarding.FolderPickerScreen
 import io.github.mafflerbach.thoughtcanvas.onboarding.FolderPickerViewModel
 import io.github.mafflerbach.thoughtcanvas.ui.theme.ThoughtCanvasTheme
@@ -49,16 +47,6 @@ private fun Root(viewModel: FolderPickerViewModel = hiltViewModel()) {
     val root by viewModel.root.collectAsStateWithLifecycle()
     when (root) {
         is StorageRoot.Unconfigured -> FolderPickerScreen(viewModel = viewModel)
-        is StorageRoot.Configured -> Placeholder()
-    }
-}
-
-@Composable
-private fun Placeholder() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = "ThoughtCanvas — journal coming soon",
-            style = MaterialTheme.typography.headlineMedium,
-        )
+        is StorageRoot.Configured -> TodayJournalScreen()
     }
 }

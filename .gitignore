@@ -1,0 +1,44 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/**/build/
+!**/src/**/main/build/
+!**/src/**/test/build/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+.fleet/
+out/
+
+# Local config
+local.properties
+*.log
+captures/
+
+# Keystores / secrets
+*.jks
+*.keystore
+!debug.keystore
+signing.properties
+*.env
+.secrets/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kotlin
+.kotlin/
+
+# KSP
+**/generated/ksp/**/build/
+
+# NDK
+.cxx/
+
+# Reports
+**/reports/

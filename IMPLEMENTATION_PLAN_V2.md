@@ -55,11 +55,14 @@ CI badge is green on `main`.
 Goal: open today's entry, type markdown, draw ink, insert photo, tag it, persist to SAF folder and Room index.
 
 ### 1.1 — Storage foundation (`:core:storage`)
-- [ ] `StorageRoot` sealed type + `SafStorageRoot` impl using `DocumentFile`
-- [ ] First-run flow: `ACTION_OPEN_DOCUMENT_TREE`, `takePersistableUriPermission`, persist URI in DataStore
-- [ ] `JournalPathResolver`: given `LocalDate` → `Journal/YYYY/MM/DD/` DocumentFile
-- [ ] `FileRepository` interface with `readText`, `writeText`, `writeBytes`, `list`, `delete`
-- [ ] Unit tests against a fake `FileRepository`; instrumentation test against real SAF (temp folder)
+- [x] `StorageRoot` sealed type
+- [x] `SafFileRepository` using `DocumentFile`
+- [x] First-run flow: `ACTION_OPEN_DOCUMENT_TREE`, `takePersistableUriPermission`, persist URI in DataStore (`StorageRootPreferences`)
+- [x] `JournalPathResolver`: given `LocalDate` → `Journal/YYYY/MM/DD/`
+- [x] `FileRepository` interface with `readText`, `writeText`, `writeBytes`, `list`, `delete`
+- [x] `StorageRootState` (app-scoped `StateFlow`) + Hilt wiring
+- [x] Unit tests: `JournalPathResolverTest`, `InMemoryFileRepositoryTest`
+- [ ] Instrumentation test against real SAF (deferred to next slice — needs emulator/device)
 
 **Verify:** instrumentation test writes `journal.md`, reads it back, path visible via Files app.
 

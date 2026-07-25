@@ -11,9 +11,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.mafflerbach.thoughtcanvas.core.storage.StorageRoot
+import io.github.mafflerbach.thoughtcanvas.onboarding.FolderPickerScreen
+import io.github.mafflerbach.thoughtcanvas.onboarding.FolderPickerViewModel
 import io.github.mafflerbach.thoughtcanvas.ui.theme.ThoughtCanvasTheme
 
 @AndroidEntryPoint
@@ -25,12 +31,12 @@ class MainActivity : ComponentActivity() {
             ThoughtCanvasTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding),
-                        contentAlignment = Alignment.Center,
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(padding),
                     ) {
-                        Placeholder()
+                        Root()
                     }
                 }
             }
@@ -39,9 +45,20 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
+private fun Root(viewModel: FolderPickerViewModel = hiltViewModel()) {
+    val root by viewModel.root.collectAsStateWithLifecycle()
+    when (root) {
+        is StorageRoot.Unconfigured -> FolderPickerScreen(viewModel = viewModel)
+        is StorageRoot.Configured -> Placeholder()
+    }
+}
+
+@Composable
 private fun Placeholder() {
-    Text(
-        text = "ThoughtCanvas",
-        style = MaterialTheme.typography.headlineLarge,
-    )
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(
+            text = "ThoughtCanvas — journal coming soon",
+            style = MaterialTheme.typography.headlineMedium,
+        )
+    }
 }

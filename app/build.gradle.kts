@@ -54,6 +54,7 @@ dependencies {
     implementation(project(":core:database"))
     implementation(project(":core:storage"))
     implementation(project(":feature:journal"))
+    implementation(project(":feature:canvas"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

@@ -11,7 +11,7 @@ activity = "1.9.3"
 composeBom = "2024.12.01"
 navigation = "2.8.5"
 coil = "2.7.0"
-ink = "1.0.0-alpha01"
+ink = "1.0.0"
 junit = "4.13.2"
 androidxTestJunit = "1.2.1"
 espresso = "3.6.1"
@@ -66,9 +66,11 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 # Ink API (Phase 1.4)
 androidx-ink-authoring = { module = "androidx.ink:ink-authoring", version.ref = "ink" }
+androidx-ink-authoring-compose = { module = "androidx.ink:ink-authoring-compose", version.ref = "ink" }
 androidx-ink-brush = { module = "androidx.ink:ink-brush", version.ref = "ink" }
 androidx-ink-geometry = { module = "androidx.ink:ink-geometry", version.ref = "ink" }
 androidx-ink-rendering = { module = "androidx.ink:ink-rendering", version.ref = "ink" }
+androidx-ink-storage = { module = "androidx.ink:ink-storage", version.ref = "ink" }
 androidx-ink-strokes = { module = "androidx.ink:ink-strokes", version.ref = "ink" }
 
 # Testing

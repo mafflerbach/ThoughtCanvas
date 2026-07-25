@@ -86,35 +86,64 @@ Goal: open today's entry, type markdown, draw ink, insert photo, tag it, persist
 
 **Verify:** manual — create today's entry on device, add markdown text + tag + photo, kill app, reopen, everything is still there.
 
-### 1.4 — Ink canvas (`:feature:canvas`)
-- [ ] Add `androidx.ink:ink-*` dependencies (authoring, rendering, strokes, geometry, brush)
-- [ ] `InkCanvasScreen` embedded inside `TodayJournalScreen`
-- [ ] `InProgressStrokesView` + `CanvasStrokeRenderer` per Ink API sample
-- [ ] Serialize finished `Stroke`s to `canvas.json` (schema in Phase 3, use v1 minimal now)
-- [ ] Pan + zoom via `Modifier.transformable`; infinite canvas backed by transform matrix
-- [ ] Pen input filtering: only `MotionEvent.TOOL_TYPE_STYLUS` draws; finger pans
-- [ ] Undo/redo stack in ViewModel (list of stroke ops)
+### 1.4 — Ink canvas (`:feature:canvas`) — **frozen after Slice A**
+- [x] Add `androidx.ink:ink-*` dependencies (authoring, rendering, strokes, geometry, brush, storage, authoring-compose) at 1.0.0
+- [x] `InkCanvas` composable using `androidx.ink.authoring.compose.InProgressStrokes` + `CanvasStrokeRenderer`
+- [x] `pressurePen` stock brush, verified on Focus Pen Pro
+- [x] Embedded inside `TodayJournalScreen` as a fixed-height pane (temporary; superseded by Phase 2 block canvas)
+- [ ] ~~Persist finished strokes to disk~~ — **dropped**, superseded by Phase 2 canvas manifest
+- [ ] ~~Pan/zoom, stylus-only filter, undo/redo~~ — **dropped**, superseded by Phase 2
 
-**Verify:** stylus draws with pressure on Xiaomi Pad; finger pans; reopen entry → strokes still there.
+Rationale: Phase 1.3 verified end-to-end file/DB plumbing on device. Continuing
+to build persistence + undo on the flat UI would produce throwaway code because
+ADR-0004 pivots the app to a block-based canvas. See ADR-0004.
 
-### 1.5 — Phase 1 acceptance
-- [ ] All ADRs updated
-- [ ] README updated with screenshots
-- [ ] `./gradlew check connectedDebugAndroidTest` green
-- [ ] Manual test script in `docs/QA_PHASE1.md` executed on both tablets
+### 1.5 — Phase 1 acceptance — **abbreviated**
+- [x] Phase-1 flat MVP runs on Xiaomi Pad 8 Pro end-to-end (folder picker, journal, tags, photos, live ink drawing)
+- [ ] ~~README screenshots, QA script on both tablets~~ — **dropped**, we no longer polish the flat UI
 
 ---
 
-## Phase 2 — Drawing engine polish
+## Phase 2 — Block canvas (major pivot)
 
-Only after Phase 1 ships.
+Defined by **ADR-0004**. Supersedes the flat journal layout with a
+block-based canvas as the primary editing surface.
 
-- [ ] Tilt-aware brushes via Ink API brush families
-- [ ] Lasso selection: hit-test strokes inside a lasso path (Ink geometry API)
-- [ ] Move/scale/delete on selection
-- [ ] Persistent undo history across sessions
-- [ ] Boox e-ink perf pass: disable predicted strokes when refresh rate < 30Hz
-- [ ] Benchmarks: `androidx.benchmark` for stroke serialization
+### 2.1 — Data model + storage redesign
+- [ ] New Room schema v2: `canvases`, `blocks`, `edges`, `canvas_tags`, `block_tags`. Data-loss migration acceptable (see ADR-0004).
+- [ ] `CanvasManifest` kotlinx.serialization model matching ADR-0004 schema
+- [ ] `CanvasRepository` in `:feature:canvas`: load/save `*.canvas.json`, resolve `ref` paths relative to canvas location
+- [ ] `InkFile` model + `InkFileRepository` for `<regionId>.ink.json` and `<canvas>.floating.ink.json`
+- [ ] Migration to new layout (`journal.md` + `daily.canvas.json` per day)
+- [ ] Unit tests: manifest round-trip, ink file round-trip, ref resolution
+
+### 2.2 — Canvas rendering shell (`:feature:canvas`)
+- [ ] Bounded (8192×8192) world with `Modifier.transformable` pan/zoom
+- [ ] `CanvasScreen` replaces `TodayJournalScreen` as the entry point post-onboarding
+- [ ] Block layer: place-holder frames with drag/resize/delete
+- [ ] Ink layer: floating strokes on top; per-region strokes rendered inside their block bounds
+- [ ] Stylus-only ink capture; finger pans; two-finger pinch zooms
+- [ ] Autosave on move/edit (debounced) writing back to the manifest
+
+### 2.3 — Block kinds
+- [ ] `markdown-embed` — in-place editable Compose editor writing directly to the referenced `.md` file, with YAML frontmatter tag parsing
+- [ ] `image-embed` — read-only rendering via existing `SafPathResolver`
+- [ ] `ink-region` — nested ink authoring within the block bounds; strokes stored in region-local coordinates in a separate `.ink.json` file
+
+### 2.4 — Edges
+- [ ] Directed edges between blocks with optional labels
+- [ ] Auto-routing from block centers; explicit sides in schema when set
+- [ ] Edge draw layer above blocks, below floating ink
+
+### 2.5 — Daily-canvas UX
+- [ ] On launch: open today's `Journal/YYYY/MM/DD/daily.canvas.json`
+- [ ] If missing, bootstrap: create the folder, empty `journal.md`, and a canvas containing a single `markdown-embed` block pointing at it
+- [ ] Simple date-picker in the top bar to hop to another day
+
+### 2.6 — Undo, selection, retire flat UI
+- [ ] Undo/redo covering block create/move/resize/delete and ink strokes
+- [ ] Lasso selection: box-select blocks and floating strokes; group move
+- [ ] Delete `:feature:journal` flat screen once daily canvas is stable
 
 ---
 

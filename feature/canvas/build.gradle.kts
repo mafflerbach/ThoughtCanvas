@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "io.github.mafflerbach.thoughtcanvas.feature.journal"
+    namespace = "io.github.mafflerbach.thoughtcanvas.feature.canvas"
     compileSdk = 35
 
     defaultConfig {
@@ -33,8 +33,6 @@ android {
 
 dependencies {
     implementation(project(":core:storage"))
-    implementation(project(":core:database"))
-    implementation(project(":feature:canvas"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -48,10 +46,16 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    implementation(libs.coil.compose)
+    implementation(libs.androidx.ink.authoring)
+    implementation(libs.androidx.ink.authoring.compose)
+    implementation(libs.androidx.ink.brush)
+    implementation(libs.androidx.ink.geometry)
+    implementation(libs.androidx.ink.rendering)
+    implementation(libs.androidx.ink.storage)
+    // Stroke leaks into the CanvasViewModel public surface; expose it to consumers.
+    api(libs.androidx.ink.strokes)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
@@ -61,11 +65,5 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.kotlinx.serialization.json)
     androidTestImplementation(libs.androidx.test.junit)
-    androidTestImplementation(libs.androidx.room.testing)
-    androidTestImplementation(libs.kotlinx.coroutines.test)
-    androidTestImplementation(libs.kotlinx.serialization.json)
-    androidTestImplementation("androidx.test:core:1.6.1")
-    androidTestImplementation("androidx.test:runner:1.6.2")
 }

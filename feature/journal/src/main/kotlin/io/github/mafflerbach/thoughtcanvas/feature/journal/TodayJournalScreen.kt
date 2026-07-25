@@ -43,6 +43,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import io.github.mafflerbach.thoughtcanvas.feature.canvas.CanvasViewModel
+import io.github.mafflerbach.thoughtcanvas.feature.canvas.InkCanvas
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -171,6 +173,24 @@ private fun JournalBody(
         if (state.images.isNotEmpty()) {
             ImageStrip(uris = state.images)
         }
+
+        Text("Canvas", style = MaterialTheme.typography.titleSmall)
+        InlineInkCanvas()
+    }
+}
+
+@Composable
+private fun InlineInkCanvas(canvasViewModel: CanvasViewModel = hiltViewModel()) {
+    val strokes by canvasViewModel.strokes.collectAsStateWithLifecycle()
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(320.dp),
+    ) {
+        InkCanvas(
+            finishedStrokes = strokes,
+            onStrokesFinished = canvasViewModel::onStrokesFinished,
+        )
     }
 }
 
